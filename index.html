@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CASE FILE: BETWEEN THE LINES — Offline Classroom Edition</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-alt: #273549;
+      --paper: #f8fafc;
+      --paper-ink: #0f172a;
+      --accent: #f59e0b;
+      --accent-dark: #d97706;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #334155;
+      --highlight: #fde047;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-offline {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid var(--success);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .brand h1 {
+      font-size: 1.2rem;
+      letter-spacing: 0.04em;
+      font-weight: 800;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      transition: transform 0.08s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-secondary {
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #334155;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #06281e;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+    }
+
+    /* Layout Container */
+    main {
+      width: 100%;
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+      flex: 1;
+    }
+
+    .formula-banner {
+      background: linear-gradient(90deg, #1e293b, #263449);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .formula-text {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .formula-text span {
+      color: var(--accent);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 1rem;
+    }
+
+    .mode-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      color: var(--text);
+    }
+
+    .mode-btn.selected {
+      border-color: var(--accent);
+      background: rgba(245, 158, 11, 0.14);
+    }
+
+    /* Case Screen */
+    .case-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .role-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .role-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    .role-box strong {
+      display: block;
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Interactive Passage Paper */
+    .evidence-paper {
+      background: var(--paper);
+      color: var(--paper-ink);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .evidence-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #cbd5e1;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #334155;
+    }
+
+    .passage-words {
+      font-size: 1.38rem;
+      line-height: 1.85;
+      font-weight: 500;
+      user-select: none;
+    }
+
+    .word-token {
+      display: inline-block;
+      padding: 2px 4px;
+      margin: 1px 1px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    .word-token:hover {
+      background: #e2e8f0;
+    }
+
+    .word-token.marked {
+      background: var(--highlight);
+      color: #0f172a;
+      font-weight: 700;
+      box-shadow: 0 1px 0 #eab308;
+    }
+
+    .word-token.key-reveal {
+      background: #86efac;
+      color: #064e3b;
+      font-weight: 800;
+    }
+
+    .hint-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: #fef3c7;
+      color: #78350f;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .hint-box.visible {
+      display: block;
+    }
+
+    /* Options */
+    .options-list {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0 20px;
+    }
+
+    .option-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: left;
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .option-card:hover {
+      border-color: #64748b;
+    }
+
+    .option-card.selected {
+      border-color: var(--accent);
+      background: rgba(245, 158, 11, 0.14);
+    }
+
+    .option-letter {
+      background: var(--surface-alt);
+      color: var(--accent);
+      min-width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    /* Debrief */
+    .result-banner {
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .result-banner.correct {
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid var(--success);
+      color: #6ee7b7;
+    }
+
+    .result-banner.trap {
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid var(--accent);
+      color: #fde68a;
+    }
+
+    .trap-alert {
+      background: var(--bg);
+      border-left: 5px solid var(--accent);
+      border-radius: 10px;
+      padding: 16px;
+      margin: 16px 0;
+      line-height: 1.6;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 560px;
+      width: 100%;
+      padding: 24px;
+    }
+
+    .modal-box h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .modal-box p, .modal-box li {
+      line-height: 1.6;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .modal-box ul {
+      padding-left: 20px;
+      margin-bottom: 14px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="badge-offline">● OFFLINE READY</span>
+      <h1>CASE FILE: BETWEEN THE LINES</h1>
+    </div>
+    <div class="top-actions">
+      <button class="btn-secondary" onclick="openFormulaModal()">[?] FORMULA</button>
+      <button class="btn-secondary" onclick="showScreen('screen-scoreboard')">SCOREBOARD</button>
+      <button class="btn-secondary" onclick="showScreen('screen-exit')">EXIT TICKET</button>
+      <button class="btn-secondary" onclick="showScreen('screen-setup')">SETUP</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="formula-banner">
+      <div class="formula-text">
+        <span>Text Clue</span> + <span>What I Already Know</span> = <span>Smart Inference</span>
+      </div>
+      <div style="font-size: 0.9rem; color: var(--muted);">
+        No negative points • Tap words to highlight evidence
+      </div>
+    </div>
+
+    <!-- SCREEN 1: OFFLINE SETUP -->
+    <section id="screen-setup" class="screen active">
+      <div class="card">
+        <h2 style="margin-bottom: 6px;">Single-Device Offline Classroom Setup</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">
+          Designed for 50 students working in pairs or small groups on one shared screen or pass-and-play device.
+        </p>
+
+        <div class="grid-2">
+          <div>
+            <label>Play Mode</label>
+            <div class="mode-group">
+              <button type="button" id="mode-pass" class="mode-btn selected" onclick="selectMode('pass')">
+                Pass &amp; Play<br><small style="color:var(--muted);">Pairs / Squads rotate on device</small>
+              </button>
+              <button type="button" id="mode-showdown" class="mode-btn" onclick="selectMode('showdown')">
+                Class Showdown<br><small style="color:var(--muted);">Single projector screen</small>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="team-count">Number of Pairs / Squads (2–25)</label>
+            <input type="number" id="team-count" min="1" max="25" value="6" />
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <label for="team-prefix">Team Label Prefix (e.g., Pair or Squad)</label>
+          <input type="text" id="team-prefix" value="Pair" placeholder="Pair or Squad" />
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px;">
+          <button class="btn-primary" onclick="startOfflineSession()">START OFFLINE SESSION</button>
+          <button class="btn-danger" onclick="resetAllData()">RESET DATA</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: MAIN CASE INVESTIGATION -->
+    <section id="screen-case" class="screen">
+      <div class="card">
+        <div class="case-header">
+          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+            <span class="pill" id="case-counter">CASE 01 / 04</span>
+            <span class="pill" id="active-team-pill" style="border-color:var(--accent); color:var(--accent);">ACTIVE: Pair 01</span>
+            <span class="pill" id="team-score-pill">SCORE: 0 PTS</span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="pill" id="timer-display">01:30</span>
+            <button class="btn-secondary" onclick="toggleTimer()" id="timer-btn">START TIMER</button>
+          </div>
+        </div>
+
+        <div class="role-strip">
+          <div class="role-box">
+            <strong>Step 1 — Clue Spotter</strong>
+            Tap the exact words in the text that act as clues.
+          </div>
+          <div class="role-box">
+            <strong>Step 2 — Inference Builder</strong>
+            Connect clues + prior knowledge, then select A, B, or C.
+          </div>
+        </div>
+
+        <div class="evidence-paper">
+          <div class="evidence-meta">
+            <span id="case-title">CASE 01: LATE NIGHT SCREEN</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-secondary" style="padding:6px 12px; font-size:0.85rem;" onclick="toggleHint()">HINT</button>
+              <button class="btn-secondary" style="padding:6px 12px; font-size:0.85rem;" onclick="clearHighlights()">CLEAR</button>
+            </div>
+          </div>
+
+          <div id="passage-container" class="passage-words"></div>
+
+          <div id="hint-box" class="hint-box"></div>
+        </div>
+
+        <div style="font-size:0.95rem; color:var(--muted); margin-bottom:8px;">
+          Selected Clues: <strong id="selected-clues-preview" style="color:var(--accent);">None yet (tap words above)</strong>
+        </div>
+
+        <div id="options-container" class="options-list"></div>
+
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px;">
+          <button class="btn-secondary" onclick="skipToNextTeam()">SKIP / ROTATE TEAM</button>
+          <button class="btn-primary" onclick="submitCase()">SUBMIT CASE</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: DEBRIEF & TRAP BREAKER -->
+    <section id="screen-debrief" class="screen">
+      <div class="card">
+        <div id="result-banner" class="result-banner correct"></div>
+
+        <div class="evidence-paper">
+          <div class="evidence-meta">
+            <span>KEY TEXT EVIDENCE REVEALED</span>
+            <span style="color:#065f46;">Green = Key Clues</span>
+          </div>
+          <div id="debrief-passage" class="passage-words"></div>
+        </div>
+
+        <div class="trap-alert" id="trap-explanation"></div>
+
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; margin-top:20px;">
+          <button class="btn-success" id="trap-bonus-btn" onclick="awardTrapInsight()">+50 TRAP INSIGHT BONUS</button>
+          <button class="btn-primary" onclick="advanceTurn()">NEXT TEAM / CASE →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: SCOREBOARD -->
+    <section id="screen-scoreboard" class="screen">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <h2>Offline Classroom Scoreboard</h2>
+          <button class="btn-primary" onclick="resumeGame()">BACK TO CASE</button>
+        </div>
+        <p style="color:var(--muted); margin-top:6px;">Saved locally on this device. No internet connection needed.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>Cases Played</th>
+              <th>Total Points</th>
+            </tr>
+          </thead>
+          <tbody id="scoreboard-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SCREEN 5: EXIT TICKET -->
+    <section id="screen-exit" class="screen">
+      <div class="card">
+        <h2>End-of-Class Exit Ticket (Offline Log)</h2>
+        <p style="color:var(--muted); margin: 6px 0 16px;">
+          Read the final micro-case below. Write your inference and the exact text clue that proves it (+100 pts).
+        </p>
+
+        <div class="evidence-paper">
+          <div class="evidence-meta"><span>FINAL CHECK: THE EMPTY PLATFORM</span></div>
+          <p style="font-size:1.25rem; line-height:1.7;">
+            "Nadia checked the station clock at 8:12 a.m. The 8:10 express train board had just switched to <em>DEPARTED</em>, and she stood alone on Platform 2 holding her untouched coffee."
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label for="exit-student">Student Name / Number</label>
+            <input type="text" id="exit-student" placeholder="e.g., #14 Somchai" />
+          </div>
+          <div>
+            <label for="exit-clue">Exact Text Clue</label>
+            <input type="text" id="exit-clue" placeholder="e.g., 8:12 a.m. / switched to DEPARTED" />
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label for="exit-inference">Your Smart Inference</label>
+          <textarea id="exit-inference" rows="3" placeholder="We infer that... because..."></textarea>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;">
+          <button class="btn-primary" onclick="saveExitTicket()">SAVE EXIT TICKET (+100 PTS)</button>
+          <button class="btn-secondary" onclick="resumeGame()">BACK TO CASE</button>
+        </div>
+
+        <div id="exit-log-list" style="margin-top:22px;"></div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Blueprint Classroom • Single-Device Offline Edition • Ready for GitHub Pages
+    </div>
+  </main>
+
+  <!-- FORMULA MODAL -->
+  <div id="formula-modal" class="modal-backdrop" onclick="closeFormulaModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3>Inference Reading Formula</h3>
+      <p><strong>Text Clue + What I Already Know = Smart Inference</strong></p>
+      <ul>
+        <li><strong>Literal Fact:</strong> Directly stated on the page (not an inference).</li>
+        <li><strong>Smart Inference:</strong> Logical conclusion supported by exact clues + real-world knowledge.</li>
+        <li><strong>Trap Answers:</strong> Watch out for choices that merely copy a literal detail, contradict the text, or guess beyond the clues.</li>
+      </ul>
+      <p style="color:var(--accent); font-weight:600;">
+        Speaking Frame: "We infer that _____ because the text says '_____,' and we know that _____."
+      </p>
+      <button class="btn-primary" style="margin-top:12px;" onclick="closeFormulaModal()">GOT IT</button>
+    </div>
+  </div>
+
+  <script>
+    const CASES = [
+      {
+        id: "CASE 01",
+        title: "LATE NIGHT SCREEN",
+        passage: "Maya stared at her phone at 11:45 p.m. The group chat had five new messages, all with photos from the night market. She quietly closed the curtains and set her alarm for 5:30 a.m.",
+        keyWords: ["11:45", "p.m.", "five", "new", "messages,", "photos", "night", "market.", "closed", "curtains", "alarm", "5:30", "a.m."],
+        hint: "Think about the time of night (11:45 p.m.), where her friends are, and why she set an alarm for 5:30 a.m.",
+        options: [
+          {
+            letter: "A",
+            text: "Maya wasn't out with the group and wants to sleep early for an early start.",
+            correct: true,
+            tag: "Smart Inference"
+          },
+          {
+            letter: "B",
+            text: "Maya threw her phone across the room in anger.",
+            correct: false,
+            tag: "Over-Inference Trap"
+          },
+          {
+            letter: "C",
+            text: "There were five messages in the group chat.",
+            correct: false,
+            tag: "Literal Trap"
+          }
+        ],
+        explanation: "Option A combines the late hour (11:45 p.m.), seeing friends at the night market, and setting a 5:30 a.m. alarm. Option C is only a literal fact, while Option B invents anger not supported by 'quietly closed the curtains.'"
+      },
+      {
+        id: "CASE 02",
+        title: "MORNING FLOUR",
+        passage: "The bakery bell chimed at 6:05 a.m. Mr. Park wiped flour onto his apron, flipped the sign on the glass from CLOSED to OPEN, and pulled a tray of golden croissants from the oven.",
+        keyWords: ["6:05", "a.m.", "flipped", "sign", "CLOSED", "OPEN,", "croissants", "oven."],
+        hint: "Check the clock time (6:05 a.m.) and the direction the door sign was flipped.",
+        options: [
+          {
+            letter: "A",
+            text: "Mr. Park is locking up the shop at the end of the night.",
+            correct: false,
+            tag: "Contradiction Trap"
+          },
+          {
+            letter: "B",
+            text: "It is early morning and the bakery is opening for customers.",
+            correct: true,
+            tag: "Smart Inference"
+          },
+          {
+            letter: "C",
+            text: "Mr. Park wore an apron and a bell chimed.",
+            correct: false,
+            tag: "Literal Trap"
+          }
+        ],
+        explanation: "Option B connects '6:05 a.m.', flipping the sign to OPEN, and fresh croissants coming out of the oven. Option A contradicts the morning time and OPEN sign, while Option C simply repeats literal facts."
+      },
+      {
+        id: "CASE 03",
+        title: "FOUR FLIGHTS UP",
+        passage: "Leo carried two heavy boxes up to the fourth floor, stopping at the third landing to catch his breath. There was no elevator sign anywhere in the building, and his knees ached.",
+        keyWords: ["two", "heavy", "boxes", "fourth", "floor,", "stopping", "catch", "breath.", "no", "elevator", "knees", "ached."],
+        hint: "Notice there is no elevator sign and he is carrying heavy boxes up four floors.",
+        options: [
+          {
+            letter: "A",
+            text: "Leo lives on the ground floor.",
+            correct: false,
+            tag: "Contradiction Trap"
+          },
+          {
+            letter: "B",
+            text: "The building has a fast express elevator on the third floor.",
+            correct: false,
+            tag: "Over-Inference Trap"
+          },
+          {
+            letter: "C",
+            text: "Climbing the stairs with heavy boxes is tiring and hard on Leo's knees.",
+            correct: true,
+            tag: "Smart Inference"
+          }
+        ],
+        explanation: "Option C logically connects carrying heavy boxes up four floors without an elevator to stopping to catch his breath and aching knees. Options A and B contradict the text clues."
+      },
+      {
+        id: "CASE 04",
+        title: "LAB REPORT CHECK",
+        passage: "When the teacher asked who had finished the lab report, half the class suddenly stared at their notebooks. Kenji slowly slid his halfway under his desk.",
+        keyWords: ["half", "class", "suddenly", "stared", "notebooks.", "Kenji", "slowly", "slid", "under", "desk."],
+        hint: "Think about why students avoid eye contact and hide their work when a teacher asks who finished.",
+        options: [
+          {
+            letter: "A",
+            text: "Many students, including Kenji, haven't finished or aren't ready to hand theirs in.",
+            correct: true,
+            tag: "Smart Inference"
+          },
+          {
+            letter: "B",
+            text: "Every student finished early and raised their hand right away.",
+            correct: false,
+            tag: "Contradiction Trap"
+          },
+          {
+            letter: "C",
+            text: "The teacher asked about the lab report.",
+            correct: false,
+            tag: "Literal Trap"
+          }
+        ],
+        explanation: "Option A uses body-language clues ('suddenly stared at their notebooks' and sliding the report under the desk) to infer unfinished work. Option B contradicts the scene, and Option C is only a literal statement."
+      }
+    ];
+
+    const STORAGE_KEY = "blueprint_case_file_offline_v1";
+
+    let state = {
+      mode: "pass",
+      teams: [],
+      currentCaseIndex: 0,
+      currentTeamIndex: 0,
+      markedIndices: [],
+      selectedOption: null,
+      trapBonusAwarded: false,
+      exitTickets: []
+    };
+
+    let timerSeconds = 90;
+    let timerInterval = null;
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          state = JSON.parse(saved);
+          if (state.teams && state.teams.length > 0) {
+            renderCaseScreen();
+            showScreen("screen-case");
+          }
+        } catch (e) {
+          console.error("Could not parse saved state", e);
+        }
+      }
+      renderExitTickets();
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function selectMode(mode) {
+      state.mode = mode;
+      document.getElementById("mode-pass").classList.toggle("selected", mode === "pass");
+      document.getElementById("mode-showdown").classList.toggle("selected", mode === "showdown");
+    }
+
+    function startOfflineSession() {
+      const count = Math.max(1, Math.min(25, parseInt(document.getElementById("team-count").value || "6", 10)));
+      const prefix = (document.getElementById("team-prefix").value || "Pair").trim();
+
+      state.teams = Array.from({ length: count }, (_, i) => ({
+        name: `${prefix} ${String(i + 1).padStart(2, "0")}`,
+        score: 0,
+        played: 0
+      }));
+      state.currentCaseIndex = 0;
+      state.currentTeamIndex = 0;
+      state.markedIndices = [];
+      state.selectedOption = null;
+      state.trapBonusAwarded = false;
+
+      saveState();
+      renderCaseScreen();
+      showScreen("screen-case");
+    }
+
+    function resetAllData() {
+      if (!confirm("Reset all offline scores, progress, and exit tickets?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      state = {
+        mode: "pass",
+        teams: [],
+        currentCaseIndex: 0,
+        currentTeamIndex: 0,
+        markedIndices: [],
+        selectedOption: null,
+        trapBonusAwarded: false,
+        exitTickets: []
+      };
+      renderExitTickets();
+      showScreen("screen-setup");
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      if (id === "screen-scoreboard") renderScoreboard();
+      if (id === "screen-exit") renderExitTickets();
+    }
+
+    function resumeGame() {
+      if (!state.teams || state.teams.length === 0) {
+        showScreen("screen-setup");
+        return;
+      }
+      renderCaseScreen();
+      showScreen("screen-case");
+    }
+
+    function renderCaseScreen() {
+      const c = CASES[state.currentCaseIndex];
+      const team = state.teams[state.currentTeamIndex] || { name: "Pair 01", score: 0 };
+
+      document.getElementById("case-counter").textContent = `${c.id} / 0${CASES.length}`;
+      document.getElementById("active-team-pill").textContent = `ACTIVE: ${team.name}`;
+      document.getElementById("team-score-pill").textContent = `SCORE: ${team.score} PTS`;
+      document.getElementById("case-title").textContent = `${c.id}: ${c.title}`;
+
+      const hintBox = document.getElementById("hint-box");
+      hintBox.textContent = `Prior Knowledge Hint: ${c.hint}`;
+      hintBox.classList.remove("visible");
+
+      const words = c.passage.split(" ");
+      const passageEl = document.getElementById("passage-container");
+      passageEl.innerHTML = "";
+      words.forEach((word, idx) => {
+        const span = document.createElement("span");
+        span.className = "word-token" + (state.markedIndices.includes(idx) ? " marked" : "");
+        span.textContent = word;
+        span.onclick = () => toggleWordMark(idx);
+        passageEl.appendChild(span);
+        passageEl.appendChild(document.createTextNode(" "));
+      });
+
+      updateSelectedCluesPreview();
+
+      const optEl = document.getElementById("options-container");
+      optEl.innerHTML = "";
+      c.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-card" + (state.selectedOption === opt.letter ? " selected" : "");
+        btn.innerHTML = `<span class="option-letter">${opt.letter}</span><span>${opt.text}</span>`;
+        btn.onclick = () => {
+          state.selectedOption = opt.letter;
+          renderCaseScreen();
+        };
+        optEl.appendChild(btn);
+      });
+
+      resetTimer();
+    }
+
+    function toggleWordMark(idx) {
+      if (state.markedIndices.includes(idx)) {
+        state.markedIndices = state.markedIndices.filter(i => i !== idx);
+      } else {
+        state.markedIndices.push(idx);
+      }
+      renderCaseScreen();
+    }
+
+    function clearHighlights() {
+      state.markedIndices = [];
+      renderCaseScreen();
+    }
+
+    function updateSelectedCluesPreview() {
+      const c = CASES[state.currentCaseIndex];
+      const words = c.passage.split(" ");
+      const preview = document.getElementById("selected-clues-preview");
+      if (state.markedIndices.length === 0) {
+        preview.textContent = "None yet (tap words above)";
+        return;
+      }
+      const chosen = [...state.markedIndices].sort((a, b) => a - b).map(i => words[i]).join(" ");
+      preview.textContent = `"${chosen}"`;
+    }
+
+    function toggleHint() {
+      document.getElementById("hint-box").classList.toggle("visible");
+    }
+
+    function submitCase() {
+      if (!state.selectedOption) {
+        alert("Please have the Inference Builder choose A, B, or C before submitting.");
+        return;
+      }
+
+      stopTimer();
+      const c = CASES[state.currentCaseIndex];
+      const team = state.teams[state.currentTeamIndex];
+      const chosenOpt = c.options.find(o => o.letter === state.selectedOption);
+      const words = c.passage.split(" ");
+
+      let clueMatches = 0;
+      state.markedIndices.forEach(idx => {
+        const w = words[idx];
+        if (c.keyWords.some(kw => w.toLowerCase().includes(kw.toLowerCase().replace(/[.,]/g, "")))) {
+          clueMatches++;
+        }
+      });
+
+      const cluePoints = Math.min(clueMatches, 3) * 50;
+      const inferencePoints = chosenOpt.correct ? 100 : 0;
+      const earned = inferencePoints + cluePoints;
+
+      team.score += earned;
+      team.played += 1;
+      state.trapBonusAwarded = false;
+      saveState();
+
+      const banner = document.getElementById("result-banner");
+      if (chosenOpt.correct) {
+        banner.className = "result-banner correct";
+        banner.textContent = `SMART INFERENCE! ${team.name} earned +${earned} pts (+100 Inference, +${cluePoints} Clue Match).`;
+      } else {
+        banner.className = "result-banner trap";
+        banner.textContent = `TRAP CAUGHT (${chosenOpt.tag})! ${team.name} earned +${cluePoints} Clue Match pts (0 negative points).`;
+      }
+
+      const debriefPassage = document.getElementById("debrief-passage");
+      debriefPassage.innerHTML = "";
+      words.forEach(w => {
+        const span = document.createElement("span");
+        const isKey = c.keyWords.some(kw => w.toLowerCase().includes(kw.toLowerCase().replace(/[.,]/g, "")));
+        span.className = "word-token" + (isKey ? " key-reveal" : "");
+        span.textContent = w;
+        debriefPassage.appendChild(span);
+        debriefPassage.appendChild(document.createTextNode(" "));
+      });
+
+      const correctOpt = c.options.find(o => o.correct);
+      document.getElementById("trap-explanation").innerHTML = `
+        <strong>Best Answer (${correctOpt.letter}):</strong> ${correctOpt.text}<br><br>
+        <strong>TRAP ALERT &amp; Evidence Breakdown:</strong> ${c.explanation}
+      `;
+
+      const bonusBtn = document.getElementById("trap-bonus-btn");
+      bonusBtn.disabled = false;
+      bonusBtn.textContent = "+50 TRAP INSIGHT BONUS";
+
+      showScreen("screen-debrief");
+    }
+
+    function awardTrapInsight() {
+      if (state.trapBonusAwarded) return;
+      const team = state.teams[state.currentTeamIndex];
+      team.score += 50;
+      state.trapBonusAwarded = true;
+      saveState();
+      const bonusBtn = document.getElementById("trap-bonus-btn");
+      bonusBtn.disabled = true;
+      bonusBtn.textContent = "✓ +50 TRAP INSIGHT AWARDED";
+    }
+
+    function skipToNextTeam() {
+      state.currentTeamIndex = (state.currentTeamIndex + 1) % state.teams.length;
+      state.markedIndices = [];
+      state.selectedOption = null;
+      saveState();
+      renderCaseScreen();
+    }
+
+    function advanceTurn() {
+      state.markedIndices = [];
+      state.selectedOption = null;
+      state.trapBonusAwarded = false;
+
+      if (state.mode === "pass") {
+        state.currentTeamIndex = (state.currentTeamIndex + 1) % state.teams.length;
+        if (state.currentTeamIndex === 0) {
+          state.currentCaseIndex = (state.currentCaseIndex + 1) % CASES.length;
+        }
+      } else {
+        state.currentCaseIndex = (state.currentCaseIndex + 1) % CASES.length;
+        state.currentTeamIndex = (state.currentTeamIndex + 1) % state.teams.length;
+      }
+
+      saveState();
+      renderCaseScreen();
+      showScreen("screen-case");
+    }
+
+    function renderScoreboard() {
+      const tbody = document.getElementById("scoreboard-body");
+      tbody.innerHTML = "";
+      const sorted = [...state.teams].sort((a, b) => b.score - a.score);
+      sorted.forEach((t, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>#${idx + 1}</strong></td>
+          <td>${t.name}</td>
+          <td>${t.played}</td>
+          <td style="color:var(--accent); font-weight:800;">${t.score} pts</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function saveExitTicket() {
+      const student = document.getElementById("exit-student").value.trim();
+      const clue = document.getElementById("exit-clue").value.trim();
+      const inference = document.getElementById("exit-inference").value.trim();
+
+      if (!student || !clue || !inference) {
+        alert("Please fill in your name/number, exact text clue, and inference.");
+        return;
+      }
+
+      state.exitTickets.unshift({
+        student,
+        clue,
+        inference,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      });
+      saveState();
+
+      document.getElementById("exit-student").value = "";
+      document.getElementById("exit-clue").value = "";
+      document.getElementById("exit-inference").value = "";
+      renderExitTickets();
+    }
+
+    function renderExitTickets() {
+      const list = document.getElementById("exit-log-list");
+      if (!state.exitTickets || state.exitTickets.length === 0) {
+        list.innerHTML = `<p style="color:var(--muted);">No exit tickets saved on this device yet.</p>`;
+        return;
+      }
+      list.innerHTML = `<h3 style="margin-bottom:10px;">Saved Exit Tickets (${state.exitTickets.length})</h3>` +
+        state.exitTickets.map(item => `
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+            <strong>${item.student}</strong> <span style="color:var(--muted); font-size:0.85rem;">(${item.time}) • +100 pts</span><br>
+            <span style="color:var(--accent);">Clue:</span> "${item.clue}"<br>
+            <span>Inference:</span> ${item.inference}
+          </div>
+        `).join("");
+    }
+
+    function openFormulaModal() {
+      document.getElementById("formula-modal").classList.add("open");
+    }
+
+    function closeFormulaModal() {
+      document.getElementById("formula-modal").classList.remove("open");
+    }
+
+    function resetTimer() {
+      stopTimer();
+      timerSeconds = 90;
+      updateTimerDisplay();
+    }
+
+    function toggleTimer() {
+      if (timerInterval) {
+        stopTimer();
+      } else {
+        document.getElementById("timer-btn").textContent = "PAUSE";
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            stopTimer();
+          }
+        }, 1000);
+      }
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      const btn = document.getElementById("timer-btn");
+      if (btn) btn.textContent = "START TIMER";
+    }
+
+    function updateTimerDisplay() {
+      const m = String(Math.floor(timerSeconds / 60)).padStart(2, "0");
+      const s = String(timerSeconds % 60).padStart(2, "0");
+      document.getElementById("timer-display").textContent = `${m}:${s}`;
+    }
+
+    loadState();
+  </script>
+</body>
+</html>
